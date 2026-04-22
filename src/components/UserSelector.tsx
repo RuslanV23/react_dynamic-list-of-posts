@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { User } from '../types/User';
 import classNames from 'classnames';
 
@@ -9,8 +9,31 @@ export const UserSelector: React.FC<{
 }> = ({ users, activeUser, setActiveUser }) => {
   const [isOpen, setIsOpen] = useState(false);
 
+  const dropDownRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropDownRef.current &&
+        !dropDownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [setIsOpen]);
+
   return (
-    <div data-cy="UserSelector" className="dropdown is-active">
+    <div
+      data-cy="UserSelector"
+      className="dropdown is-active"
+      ref={dropDownRef}
+    >
       <div className="dropdown-trigger">
         <button
           type="button"
@@ -18,7 +41,6 @@ export const UserSelector: React.FC<{
           aria-haspopup="true"
           aria-controls="dropdown-menu"
           onClick={() => setIsOpen(!isOpen)}
-          onBlur={() => setIsOpen(false)}
         >
           <span>{activeUser?.name || `Choose a user`}</span>
 
@@ -37,7 +59,7 @@ export const UserSelector: React.FC<{
                   'is-active': user.id === activeUser?.id,
                 })}
                 key={user.id}
-                onMouseDown={() => {
+                onClick={() => {
                   setIsOpen(false);
                   setActiveUser(user);
                 }}

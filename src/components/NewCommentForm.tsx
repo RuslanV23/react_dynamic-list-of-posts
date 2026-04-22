@@ -13,9 +13,11 @@ export const NewCommentForm: React.FC<{
   const [isEmailError, setIsEmailError] = useState(false);
   const [isCommentError, setIsCommentError] = useState(false);
 
+  const [isSendError, setIsSendError] = useState(false);
+
   const [isSending, setIsSending] = useState(false);
 
-  const reset = () => {
+  const resetAll = () => {
     setNameField('');
     setEmailField('');
     setCommentField('');
@@ -24,32 +26,45 @@ export const NewCommentForm: React.FC<{
     setIsCommentError(false);
   };
 
+  const resetNameField = () => {
+    setNameField('');
+    setIsNameError(false);
+    setIsEmailError(false);
+    setIsCommentError(false);
+  };
+
   const handleOnSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsSendError(false);
     if (isSending) {
       return;
     }
 
-    setIsNameError(!nameField);
-    setIsEmailError(!emailField);
-    setIsCommentError(!commentField);
+    const normaliseNameField = nameField.trim();
+    const normaliseEmailField = emailField.trim();
+    const normaliseCommentField = commentField.trim();
 
-    if (!nameField || !emailField || !commentField) {
+    setIsNameError(!normaliseNameField);
+    setIsEmailError(!normaliseEmailField);
+    setIsCommentError(!normaliseCommentField);
+
+    if (!normaliseNameField || !normaliseEmailField || !normaliseCommentField) {
       return;
     }
 
     setIsSending(true);
 
     const newComment: Omit<Comment, 'id' | 'postId'> = {
-      name: nameField,
-      email: emailField,
-      body: commentField,
+      name: normaliseNameField,
+      email: normaliseEmailField,
+      body: normaliseCommentField,
     };
 
     onSubmit(newComment)
       .then(() => {
-        reset();
+        resetNameField();
       })
+      .catch(() => setIsSendError(true))
       .finally(() => setIsSending(false));
   };
 
@@ -69,6 +84,7 @@ export const NewCommentForm: React.FC<{
             className={classNames('input', { 'is-danger': isNameError })}
             value={nameField}
             onChange={event => {
+              setIsSendError(false);
               setIsNameError(false);
               setNameField(event.target.value);
             }}
@@ -107,6 +123,7 @@ export const NewCommentForm: React.FC<{
             className={classNames('input', { 'is-danger': isEmailError })}
             value={emailField}
             onChange={event => {
+              setIsSendError(false);
               setIsEmailError(false);
               setEmailField(event.target.value);
             }}
@@ -145,6 +162,7 @@ export const NewCommentForm: React.FC<{
             className={classNames('textarea', { 'is-danger': isCommentError })}
             value={commentField}
             onChange={event => {
+              setIsSendError(false);
               setIsCommentError(false);
               setCommentField(event.target.value);
             }}
@@ -174,12 +192,18 @@ export const NewCommentForm: React.FC<{
           <button
             type="reset"
             className="button is-link is-light"
-            onClick={() => reset()}
+            onClick={() => resetAll()}
           >
             Clear
           </button>
         </div>
       </div>
+
+      {isSendError && (
+        <div className="notification is-danger" data-cy="CommentsError">
+          Something went wrong
+        </div>
+      )}
     </form>
   );
 };

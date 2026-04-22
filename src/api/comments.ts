@@ -1,8 +1,8 @@
 import { Comment } from '../types/Comment';
 import { client } from '../utils/fetchClient';
 
-export function getCommentsOfPost(PostId: number): Promise<Comment[]> {
-  return client.get<Comment[]>('/comments?postId=' + PostId);
+export function getCommentsOfPost(postId: number): Promise<Comment[]> {
+  return client.get<Comment[]>('/comments?postId=' + postId);
 }
 
 export function createComment(comment: Omit<Comment, 'id'>): Promise<Comment> {

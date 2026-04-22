@@ -51,7 +51,6 @@ export const PostDetails: React.FC<{ openPost: Post }> = ({ openPost }) => {
         setComments(prevComment => [...prevComment, newComment]);
       })
       .catch(() => {
-        setCommentsStatus('error');
         throw new Error('Something went wrong');
       });
   };

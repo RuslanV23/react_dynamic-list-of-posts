@@ -32,7 +32,10 @@ export const App = () => {
   };
 
   useEffect(() => {
-    api.getUsers().then(fetchData => setUsers(fetchData));
+    api
+      .getUsers()
+      .then(fetchData => setUsers(fetchData))
+      .catch(() => setPostsStatus('error'));
   }, []);
 
   useEffect(() => {

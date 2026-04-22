@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Comment } from '../types/Comment';
 import classNames from 'classnames';
 
-export const NewCommentForm: React.FC<{
+export const NewCommentFormComponent: React.FC<{
   onSubmit: (comment: Omit<Comment, 'id' | 'postId'>) => Promise<void>;
 }> = ({ onSubmit }) => {
   const [nameField, setNameField] = useState('');
@@ -195,3 +195,5 @@ export const NewCommentForm: React.FC<{
     </form>
   );
 };
+
+export const NewCommentForm = React.memo(NewCommentFormComponent);

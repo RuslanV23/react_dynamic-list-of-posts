@@ -6,7 +6,7 @@ import { LoadingStatus } from '../types/LoadingStatus';
 import * as api from '../api';
 import { Comment } from '../types/Comment';
 
-export const PostDetails: React.FC<{ openPost: Post }> = ({ openPost }) => {
+const PostDetailsComponent: React.FC<{ openPost: Post }> = ({ openPost }) => {
   const [commentsStatus, setCommentsStatus] = useState<LoadingStatus>('idle');
 
   const [comments, setComments] = useState<Comment[]>([]);
@@ -172,3 +172,5 @@ export const PostDetails: React.FC<{ openPost: Post }> = ({ openPost }) => {
     </div>
   );
 };
+
+export const PostDetails = React.memo(PostDetailsComponent);

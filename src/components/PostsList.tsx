@@ -2,7 +2,7 @@ import React from 'react';
 import { Post } from '../types/Post';
 import classNames from 'classnames';
 
-export const PostsList: React.FC<{
+export const PostsListComponent: React.FC<{
   posts: Post[];
   onOpenPost: (post: Post | null) => void;
   openPost: Post | null;
@@ -38,7 +38,7 @@ export const PostsList: React.FC<{
                     })}
                     onClick={() => onOpenPost(post)}
                   >
-                    Open
+                    {openPost?.id === post.id ? 'Close' : 'Open'}
                   </button>
                 </td>
               </tr>
@@ -49,3 +49,5 @@ export const PostsList: React.FC<{
     </div>
   );
 };
+
+export const PostsList = React.memo(PostsListComponent);

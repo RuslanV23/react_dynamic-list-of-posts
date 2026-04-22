@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { User } from '../types/User';
 import classNames from 'classnames';
 
-export const UserSelector: React.FC<{
+const UserSelectorComponent: React.FC<{
   users: User[];
   activeUser: User | null;
   setActiveUser: (user: User | null) => void;
@@ -31,7 +31,7 @@ export const UserSelector: React.FC<{
   return (
     <div
       data-cy="UserSelector"
-      className="dropdown is-active"
+      className={classNames('dropdown', { 'is-active': isOpen })}
       ref={dropDownRef}
     >
       <div className="dropdown-trigger">
@@ -49,27 +49,28 @@ export const UserSelector: React.FC<{
           </span>
         </button>
       </div>
-      {isOpen && (
-        <div className="dropdown-menu" id="dropdown-menu" role="menu">
-          <div className="dropdown-content">
-            {users.map(user => (
-              <a
-                href={`#user-${user.id}`}
-                className={classNames('dropdown-item', {
-                  'is-active': user.id === activeUser?.id,
-                })}
-                key={user.id}
-                onClick={() => {
-                  setIsOpen(false);
-                  setActiveUser(user);
-                }}
-              >
-                {user.name}
-              </a>
-            ))}
-          </div>
+
+      <div className="dropdown-menu" id="dropdown-menu" role="menu">
+        <div className="dropdown-content">
+          {users.map(user => (
+            <a
+              href={`#user-${user.id}`}
+              className={classNames('dropdown-item', {
+                'is-active': user.id === activeUser?.id,
+              })}
+              key={user.id}
+              onClick={() => {
+                setIsOpen(false);
+                setActiveUser(user);
+              }}
+            >
+              {user.name}
+            </a>
+          ))}
         </div>
-      )}
+      </div>
     </div>
   );
 };
+
+export const UserSelector = React.memo(UserSelectorComponent);

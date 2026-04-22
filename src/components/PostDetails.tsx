@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Loader } from './Loader';
 import { NewCommentForm } from './NewCommentForm';
 import { Post } from '../types/Post';
@@ -11,6 +11,26 @@ export const PostDetails: React.FC<{ openPost: Post }> = ({ openPost }) => {
 
   const [comments, setComments] = useState<Comment[]>([]);
   const [isOpenForm, setIsOpenForm] = useState(false);
+
+  const [isSendError, setIsSendError] = useState(false);
+
+  const timeId = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!isSendError) {
+      return;
+    }
+
+    timeId.current = window.setTimeout(() => {
+      setIsSendError(false);
+    }, 3000);
+
+    return () => {
+      if (timeId.current) {
+        clearTimeout(timeId.current);
+      }
+    };
+  }, [isSendError]);
 
   useEffect(() => {
     if (!openPost) {
@@ -33,10 +53,16 @@ export const PostDetails: React.FC<{ openPost: Post }> = ({ openPost }) => {
   }, [openPost]);
 
   const deleteComment = (commentId: number) => {
+    const prevStateCommetns = comments;
+
     setComments(prevComments =>
       prevComments.filter(comment => comment.id !== commentId),
     );
-    api.deleteComment(commentId);
+
+    api.deleteComment(commentId).catch(() => {
+      setIsSendError(true);
+      setComments(prevStateCommetns);
+    });
   };
 
   const addComment = (comment: Omit<Comment, 'id' | 'postId'>) => {
@@ -51,6 +77,7 @@ export const PostDetails: React.FC<{ openPost: Post }> = ({ openPost }) => {
         setComments(prevComment => [...prevComment, newComment]);
       })
       .catch(() => {
+        setIsSendError(true);
         throw new Error('Something went wrong');
       });
   };
@@ -136,6 +163,12 @@ export const PostDetails: React.FC<{ openPost: Post }> = ({ openPost }) => {
         )}
       </div>
       {isOpenForm && <NewCommentForm onSubmit={addComment} />}
+
+      {isSendError && (
+        <div className="notification is-danger" data-cy="CommentsError">
+          Something went wrong
+        </div>
+      )}
     </div>
   );
 };

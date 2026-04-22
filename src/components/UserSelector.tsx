@@ -26,7 +26,7 @@ export const UserSelector: React.FC<{
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [setIsOpen]);
+  }, []);
 
   return (
     <div

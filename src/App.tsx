@@ -16,7 +16,7 @@ import { LoadingStatus } from './types/LoadingStatus';
 
 export const App = () => {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [postsStatus, setPostsStatus] = useState<LoadingStatus>('idle');
+  const [status, setStatus] = useState<LoadingStatus>('idle');
   const [users, setUsers] = useState<User[]>([]);
   const [activeUser, setActiveUser] = useState<User | null>(null);
   const [openPost, setOpenPost] = useState<Post | null>(null);
@@ -35,29 +35,29 @@ export const App = () => {
     api
       .getUsers()
       .then(fetchData => setUsers(fetchData))
-      .catch(() => setPostsStatus('error'));
+      .catch(() => setStatus('error'));
   }, []);
 
   useEffect(() => {
     setOpenPost(null);
     if (!activeUser) {
       setPosts([]);
-      setPostsStatus('idle');
+      setStatus('idle');
 
       return;
     }
 
-    setPostsStatus('loading');
+    setStatus('loading');
 
     api
       .getPostsOfUser(activeUser.id)
       .then(data => {
         setPosts(data);
-        setPostsStatus('success');
+        setStatus('success');
       })
       .catch(() => {
         setPosts([]);
-        setPostsStatus('error');
+        setStatus('error');
       });
   }, [activeUser]);
 
@@ -66,7 +66,7 @@ export const App = () => {
       return <p data-cy="NoSelectedUser">No user selected</p>;
     }
 
-    switch (postsStatus) {
+    switch (status) {
       case 'loading':
         return <Loader />;
 

@@ -13,8 +13,6 @@ export const NewCommentForm: React.FC<{
   const [isEmailError, setIsEmailError] = useState(false);
   const [isCommentError, setIsCommentError] = useState(false);
 
-  const [isSendError, setIsSendError] = useState(false);
-
   const [isSending, setIsSending] = useState(false);
 
   const resetAll = () => {
@@ -27,7 +25,7 @@ export const NewCommentForm: React.FC<{
   };
 
   const resetNameField = () => {
-    setNameField('');
+    setCommentField('');
     setIsNameError(false);
     setIsEmailError(false);
     setIsCommentError(false);
@@ -35,7 +33,7 @@ export const NewCommentForm: React.FC<{
 
   const handleOnSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setIsSendError(false);
+
     if (isSending) {
       return;
     }
@@ -64,7 +62,6 @@ export const NewCommentForm: React.FC<{
       .then(() => {
         resetNameField();
       })
-      .catch(() => setIsSendError(true))
       .finally(() => setIsSending(false));
   };
 
@@ -84,7 +81,6 @@ export const NewCommentForm: React.FC<{
             className={classNames('input', { 'is-danger': isNameError })}
             value={nameField}
             onChange={event => {
-              setIsSendError(false);
               setIsNameError(false);
               setNameField(event.target.value);
             }}
@@ -123,7 +119,6 @@ export const NewCommentForm: React.FC<{
             className={classNames('input', { 'is-danger': isEmailError })}
             value={emailField}
             onChange={event => {
-              setIsSendError(false);
               setIsEmailError(false);
               setEmailField(event.target.value);
             }}
@@ -162,7 +157,6 @@ export const NewCommentForm: React.FC<{
             className={classNames('textarea', { 'is-danger': isCommentError })}
             value={commentField}
             onChange={event => {
-              setIsSendError(false);
               setIsCommentError(false);
               setCommentField(event.target.value);
             }}
@@ -198,12 +192,6 @@ export const NewCommentForm: React.FC<{
           </button>
         </div>
       </div>
-
-      {isSendError && (
-        <div className="notification is-danger" data-cy="CommentsError">
-          Something went wrong
-        </div>
-      )}
     </form>
   );
 };
